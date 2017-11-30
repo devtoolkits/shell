@@ -1,0 +1,16 @@
+#! /usr/bin/env stap
+# stap ./dentry_count.stp | sort -nk2
+
+global l
+
+probe kernel.function("dentry*")
+{
+    l[execname(), ppfunc()]++
+}
+
+probe timer.ms(10000) { # run 10s
+  foreach ( [name,func] in l) {
+    printf("count: %-10d | func: %-30s | name: %-30s\n", l[name,func], func, name)
+  }
+  exit()
+}
