@@ -1,0 +1,7 @@
+#! /usr/bin/env stap
+
+probe syscall.open.return {
+  filename = user_string($filename)
+  if (!isinstr(filename, "20-nproc.conf") && !isinstr(filename, "limits.conf")) next;
+  printf("%s %d %s\n", execname(), pid(),filename);
+}
